@@ -39,8 +39,8 @@ class PickVideoPreview extends HookConsumerWidget {
 
       videoNotifier.value = video;
       aspectRatioNotifier.value = await video.videoAspectRatio;
-      postInfoNotifier.updateFile(video);
-      postInfoNotifier.updateAspectRatio(aspectRatioNotifier.value);
+      postInfoNotifier.setFile(video);
+      postInfoNotifier.setAspectRatio(aspectRatioNotifier.value);
 
       isVideoPicked.value = true;
       isLoading.value = false;

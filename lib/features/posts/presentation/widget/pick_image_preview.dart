@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:instagram/features/posts/presentation/constants/enums.dart';
 
+import '../constants/enums.dart';
 import '../extension/post_extensions.dart';
 import '../provider/notifier/post_info_notifier_provider.dart';
 import '../provider/notifier/post_notifier_provider.dart';
@@ -37,8 +37,8 @@ class PickImagePreview extends HookConsumerWidget {
       }
       imageNotifier.value = image;
       aspectRatioNotifier.value = await image.imageAspectRatio;
-      postInfoNotifier.updateFile(image);
-      postInfoNotifier.updateAspectRatio(aspectRatioNotifier.value);
+      postInfoNotifier.setFile(image);
+      postInfoNotifier.setAspectRatio(aspectRatioNotifier.value);
 
       isPicked.value = true;
       isLoading.value = false;

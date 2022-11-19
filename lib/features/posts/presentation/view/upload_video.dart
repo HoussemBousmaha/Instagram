@@ -6,6 +6,7 @@ import '../../../../core/handler/loading_dialog_handler.dart';
 import '../button/upload_post_button.dart';
 import '../constants/enums.dart';
 import '../handler/post_failure_handler.dart';
+import '../widget/card_post_settings.dart';
 import '../widget/description_text_field.dart';
 import '../widget/pick_video_preview.dart';
 
@@ -33,10 +34,13 @@ class UploadVideoView extends HookConsumerWidget {
             children: [
               SizedBox(height: size.height * .05),
               const PickVideoPreview(),
-              SizedBox(height: size.height * .05),
+              SizedBox(height: size.height * .01),
               const DescriptionTextField(type: FileType.video),
-              SizedBox(height: size.height * .05),
+              SizedBox(height: size.height * .02),
+              const PostSettingsCard(type: FileType.video),
+              SizedBox(height: size.height * .1),
               const UploadPostButton(type: FileType.video),
+              SizedBox(height: size.height * .2),
             ],
           ),
         ),

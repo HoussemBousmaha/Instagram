@@ -3,11 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../../core/handler/loading_dialog_handler.dart';
+import '../button/upload_post_button.dart';
 import '../constants/enums.dart';
 import '../handler/post_failure_handler.dart';
+import '../widget/card_post_settings.dart';
 import '../widget/description_text_field.dart';
 import '../widget/pick_image_preview.dart';
-import '../button/upload_post_button.dart';
 
 class UplaodImageView extends HookConsumerWidget {
   const UplaodImageView({super.key});
@@ -35,6 +36,8 @@ class UplaodImageView extends HookConsumerWidget {
               const PickImagePreview(),
               SizedBox(height: size.height * 0.01),
               const DescriptionTextField(type: FileType.image),
+              SizedBox(height: size.height * 0.02),
+              const PostSettingsCard(type: FileType.image),
               SizedBox(height: size.height * 0.1),
               const UploadPostButton(type: FileType.image),
               SizedBox(height: size.height * 0.2),

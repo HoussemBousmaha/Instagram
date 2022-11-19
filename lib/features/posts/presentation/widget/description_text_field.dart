@@ -18,7 +18,7 @@ class DescriptionTextField extends HookConsumerWidget {
     useEffect(
       () {
         controller.addListener(
-          () => ref.read(postInfoNotifierProvider(type).notifier).updateDescription(controller.text),
+          () => ref.read(postInfoNotifierProvider(type).notifier).setDescription(controller.text),
         );
         return null;
       },

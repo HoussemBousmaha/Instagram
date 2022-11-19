@@ -12,8 +12,17 @@ class PostJsonKeys {
   static const description = 'description';
   static const createdAt = 'created_at';
   static const aspectRatio = 'aspect_ratio';
+  static const settings = 'settings';
 
   const PostJsonKeys._();
+}
+
+@immutable
+class PostSettingsJsonKeys {
+  static const isCommentable = 'is_commentable';
+  static const isLikeable = 'is_likeable';
+
+  const PostSettingsJsonKeys._();
 }
 
 @immutable

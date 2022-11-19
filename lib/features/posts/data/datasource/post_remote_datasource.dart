@@ -48,6 +48,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       final fileId = const Uuid().v4();
       final aspectRatio = request.aspectRatio;
       final description = request.description;
+      final settings = request.settings;
 
       // root storage reference
       final userStorageRef = _firebaseStorage.ref().child(userId);
@@ -92,6 +93,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
         PostJsonKeys.thumbnailId: fileId,
         PostJsonKeys.description: description,
         PostJsonKeys.aspectRatio: aspectRatio,
+        PostJsonKeys.settings: settings.toJson(),
         PostJsonKeys.createdAt: FieldValue.serverTimestamp(),
       };
 

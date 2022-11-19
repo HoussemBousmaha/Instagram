@@ -69,6 +69,7 @@ class PostNotifierImpl extends PostNotifier {
     final file = postInfo.file;
     final description = postInfo.description;
     final aspectRatio = postInfo.aspectRatio;
+    final settings = postInfo.settings;
 
     if (file == null || aspectRatio == null || description == null) return;
 
@@ -85,6 +86,7 @@ class PostNotifierImpl extends PostNotifier {
         type: type,
         description: description,
         aspectRatio: aspectRatio,
+        settings: settings,
       ),
     );
 

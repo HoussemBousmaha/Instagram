@@ -8,6 +8,7 @@ import '../../data/model/create_post_request.dart';
 import '../../presentation/constants/enums.dart';
 import '../entity/post.dart';
 import '../entity/post_failure.dart';
+import '../entity/post_settings.dart';
 import '../repository/post_repo.dart';
 
 @immutable
@@ -24,6 +25,7 @@ class CreatePostUseCase extends BaseUseCase<PostEntity, PostFailure, CreatePostU
       description: params.description,
       type: params.type,
       aspectRatio: params.aspectRatio,
+      settings: params.settings,
     );
     return await _postRepo.createPost(request);
   }
@@ -36,6 +38,7 @@ class CreatePostUseCaseParams {
   final String description;
   final FileType type;
   final double aspectRatio;
+  final PostSettings settings;
 
   const CreatePostUseCaseParams({
     required this.imageFile,
@@ -43,5 +46,6 @@ class CreatePostUseCaseParams {
     required this.description,
     required this.type,
     required this.aspectRatio,
+    required this.settings,
   });
 }

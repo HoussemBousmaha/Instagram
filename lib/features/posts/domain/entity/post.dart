@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/model/post_model.dart';
 import '../../presentation/constants/enums.dart';
+import 'post_settings.dart';
 
 @immutable
 class PostEntity extends Equatable {
@@ -15,6 +16,7 @@ class PostEntity extends Equatable {
   final String thumbnailId;
   final String description;
   final double aspectRatio;
+  final PostSettings settings;
   final DateTime createdAt;
 
   const PostEntity({
@@ -27,6 +29,7 @@ class PostEntity extends Equatable {
     required this.thumbnailId,
     required this.description,
     required this.aspectRatio,
+    required this.settings,
     required this.createdAt,
   });
 
@@ -41,6 +44,7 @@ class PostEntity extends Equatable {
       thumbnailId: postModel.thumbnailId!,
       description: postModel.description!,
       aspectRatio: postModel.aspectRatio!,
+      settings: postModel.settings!,
       createdAt: postModel.createdAt!,
     );
   }
@@ -56,6 +60,7 @@ class PostEntity extends Equatable {
         thumbnailId,
         description,
         aspectRatio,
+        settings,
         createdAt,
       ];
 

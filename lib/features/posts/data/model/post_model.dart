@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
+import '../../domain/entity/post_settings.dart';
 import '../../presentation/constants/enums.dart';
 import '../../presentation/constants/post_constants.dart';
 
@@ -16,7 +17,9 @@ class PostModel extends Equatable {
   final String? thumbnailId;
   final String? description;
   final double? aspectRatio;
+  final PostSettings? settings;
   final DateTime? createdAt;
+
   const PostModel({
     this.id,
     this.userId,
@@ -27,6 +30,7 @@ class PostModel extends Equatable {
     this.thumbnailId,
     this.description,
     this.aspectRatio,
+    this.settings,
     this.createdAt,
   });
 
@@ -41,6 +45,7 @@ class PostModel extends Equatable {
       thumbnailId: json[PostJsonKeys.thumbnailId],
       description: json[PostJsonKeys.description],
       aspectRatio: json[PostJsonKeys.aspectRatio],
+      settings: PostSettings.fromJson(json[PostJsonKeys.settings]),
       createdAt: (json[PostJsonKeys.createdAt] as Timestamp).toDate(),
     );
   }
@@ -56,6 +61,7 @@ class PostModel extends Equatable {
         thumbnailId,
         description,
         aspectRatio,
+        settings,
         createdAt,
       ];
 
