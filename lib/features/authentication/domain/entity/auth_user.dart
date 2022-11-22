@@ -1,44 +1,26 @@
-import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../presentation/constants/auth_constants.dart';
+part 'auth_user.freezed.dart';
+part 'auth_user.g.dart';
 
 @immutable
-class AuthUser extends Equatable {
-  final String id;
-  final String email;
-  final String? name;
-  final String? photoUrl;
+@freezed
+class AuthUser with _$AuthUser {
+  const factory AuthUser({
+    required String id,
+    required String email,
+    String? name,
+    String? photoUrl,
+  }) = _AuthUser;
 
-  const AuthUser({
-    required this.id,
-    required this.email,
-    this.name,
-    this.photoUrl,
-  });
+  const AuthUser._();
 
-  factory AuthUser.fromFirebaseUser(User user) {
-    return AuthUser(
-      id: user.uid,
-      email: user.email!,
-      name: user.displayName,
-      photoUrl: user.photoURL,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      AuthUserJsonKeys.id: id,
-      AuthUserJsonKeys.email: email,
-      AuthUserJsonKeys.name: name,
-      AuthUserJsonKeys.photoUrl: photoUrl,
-    };
-  }
-
-  @override
-  List<Object?> get props => [id, email, name, photoUrl];
-
-  @override
-  bool get stringify => true;
+  factory AuthUser.fromJson(Map<String, dynamic> json) => _$AuthUserFromJson(json);
+  factory AuthUser.fromFirebaseUser(User user) => AuthUser(
+        id: user.uid,
+        email: user.email!,
+        name: user.displayName,
+        photoUrl: user.photoURL,
+      );
 }

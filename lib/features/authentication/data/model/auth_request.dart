@@ -1,16 +1,11 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-@immutable
-class AuthRequest extends Equatable {
-  final String email;
-  final String password;
+part 'auth_request.freezed.dart';
 
-  const AuthRequest(this.email, this.password);
-
-  @override
-  List<Object?> get props => [email, password];
-
-  @override
-  bool get stringify => true;
+@freezed
+class AuthRequest with _$AuthRequest {
+  const factory AuthRequest({
+    required String email,
+    required String password,
+  }) = _AuthRequest;
 }

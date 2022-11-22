@@ -1,14 +1,13 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../../../core/constant/enum.dart';
 import '../../../../../core/dependencies/app_dependecies.dart';
 import '../../../domain/entity/post.dart';
-import '../../../domain/entity/post_failure.dart';
 import '../../../domain/entity/post_info.dart';
 import '../../../domain/usecase/create_post_usecase.dart';
 import '../../../domain/usecase/delete_post_usecase.dart';
@@ -17,116 +16,93 @@ import '../../extension/post_extensions.dart';
 import '../dependencies/post_dependencies.dart';
 import '../state/post_state.dart';
 
+part 'post_notifier.g.dart';
+
 @immutable
-abstract class PostNotifier extends AsyncNotifier<PostState> {
+abstract class PostNotifierInterface {
   Future<void> createPost(PostInfo postInfo);
   Future<void> deletePost(PostEntity post);
   Future<File?> pickImage();
   Future<File?> pickVideo();
-  void resetState();
 }
 
-typedef AsyncPostState = AsyncValue<PostState>;
-
-@immutable
-class PostNotifierImpl extends PostNotifier {
+@riverpod
+class PostNotifier extends _$PostNotifier implements PostNotifierInterface {
   @override
-  FutureOr<PostState> build() async {
-    return PostState.initial();
-  }
-
-  @override
-  void resetState() {
-    postState = PostState.initial();
-  }
-
-  set postState(PostState postState) {
-    state = AsyncPostState.data(postState);
-  }
-
-  set postSuccess(PostEntity post) {
-    postState = PostState.success(post);
-  }
-
-  set postFailure(PostFailure failure) {
-    postState = PostState.failure(failure);
-  }
-
-  set isLoading(bool isLoading) {
-    postState = state.value?.copyWith(
-          viewState: isLoading ? ViewState.loading : ViewState.initial,
-        ) ??
-        PostState.initial();
+  PostState build() {
+    return const PostState.initial();
   }
 
   @override
   Future<void> createPost(PostInfo postInfo) async {
-    isLoading = true;
+    state = const PostState.loading();
 
-    late final Uint8List thumbnail;
-
-    final type = postInfo.type;
     final file = postInfo.file;
     final description = postInfo.description;
     final aspectRatio = postInfo.aspectRatio;
-    final settings = postInfo.settings;
 
     if (file == null || aspectRatio == null || description == null) return;
 
-    if (type == FileType.image) {
-      thumbnail = file.imageThumb;
-    } else if (type == FileType.video) {
-      thumbnail = await file.videoThumb;
-    }
+    final type = postInfo.type;
+    final settings = postInfo.settings;
+    final thumbnail = type == FileType.image ? file.imageThumb : await file.videoThumb;
 
-    final result = await ref.refresh(createPostUseCaseProvider)(
-      CreatePostUseCaseParams(
-        imageFile: file,
-        thumbnailFile: thumbnail,
-        type: type,
-        description: description,
-        aspectRatio: aspectRatio,
-        settings: settings,
-      ),
+    final createPostUseCase = ref.read(createPostUseCaseProvider);
+
+    final params = CreatePostUseCaseParams(
+      imageFile: file,
+      thumbnailFile: thumbnail,
+      type: type,
+      description: description,
+      aspectRatio: aspectRatio,
+      settings: settings,
     );
 
-    result.fold(
+    final result = await createPostUseCase(params);
+
+    state = result.fold(
       (failure) {
-        debugPrint('create post failure: $failure');
-        postFailure = failure;
+        log('Post creation failed: $failure');
+        return PostState.failure(failure);
       },
       (post) {
-        debugPrint('create post success');
-        postSuccess = post;
+        log('Post created: $post');
+        return PostState.success(post);
       },
     );
   }
 
   @override
   Future<void> deletePost(PostEntity post) async {
-    isLoading = true;
+    state = const PostState.loading();
 
-    final result = await ref.refresh(deletePostUseCaseProvider)(DeletePostUseCaseParams(post));
+    final deletePostUseCase = ref.read(deletePostUseCaseProvider);
+    final params = DeletePostUseCaseParams(post);
 
-    result.fold(
+    final result = await deletePostUseCase(params);
+
+    state = result.fold(
       (failure) {
-        debugPrint('delete post failure: $failure');
-        postFailure = failure;
+        log('Post deletion failed: $failure');
+        return PostState.failure(failure);
       },
       (post) {
-        debugPrint('delete post success');
-        postSuccess = post;
+        log('Post deleted: $post');
+        return PostState.success(post);
       },
     );
   }
 
   @override
   Future<File?> pickImage() async {
-    isLoading = true;
+    state = const PostState.loading();
 
-    final imageXFile = await ref.read(imagePickerProvider).pickImage(source: ImageSource.gallery);
+    final imagePicker = ref.read(imagePickerProvider);
+    const imageSource = ImageSource.gallery;
 
-    isLoading = false;
+    final imageXFile = await imagePicker.pickImage(source: imageSource);
+
+    state = const PostState.initial();
 
     if (imageXFile == null) return null;
 
@@ -137,11 +113,14 @@ class PostNotifierImpl extends PostNotifier {
 
   @override
   Future<File?> pickVideo() async {
-    isLoading = true;
+    state = const PostState.loading();
 
-    final videoXFile = await ref.read(imagePickerProvider).pickVideo(source: ImageSource.gallery);
+    final imagePicker = ref.read(imagePickerProvider);
+    const videoSource = ImageSource.gallery;
 
-    isLoading = false;
+    final videoXFile = await imagePicker.pickVideo(source: videoSource);
+
+    state = const PostState.initial();
 
     if (videoXFile == null) return null;
 

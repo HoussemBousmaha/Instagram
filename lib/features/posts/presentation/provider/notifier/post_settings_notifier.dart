@@ -1,16 +1,18 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../domain/entity/post_settings.dart';
 
-abstract class PostSettingsNotifier extends StateNotifier<PostSettings> {
-  PostSettingsNotifier() : super(PostSettings.initial());
+part 'post_settings_notifier.g.dart';
 
+abstract class PostSettingsNotifierInterface {
   void setIsLikeable(bool isLikeable);
   void setIsCommentable(bool isCommentable);
 }
 
-class PostSettingsNotifierImpl extends PostSettingsNotifier {
-  PostSettingsNotifierImpl() : super();
+@riverpod
+class PostSettingsNotifier extends _$PostSettingsNotifier implements PostSettingsNotifierInterface {
+  @override
+  PostSettings build() => PostSettings.initial();
 
   @override
   void setIsLikeable(bool isLikeable) {

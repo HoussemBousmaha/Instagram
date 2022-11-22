@@ -1,34 +1,25 @@
 import 'dart:io';
 
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../presentation/constants/enums.dart';
 import 'post_settings.dart';
 
-@immutable
-class PostInfo extends Equatable {
-  final File? file;
-  final double? aspectRatio;
-  final String? description;
-  final PostSettings settings;
-  final FileType type;
+part "post_info.freezed.dart";
 
-  const PostInfo({
-    this.file,
-    this.aspectRatio,
-    this.description,
-    this.settings = const PostSettings(isCommentable: true, isLikeable: true),
-    required this.type,
-  });
+@freezed
+class PostInfo with _$PostInfo {
+  const factory PostInfo({
+    File? file,
+    double? aspectRatio,
+    String? description,
+    @Default(PostSettings(isLikeable: true, isCommentable: true)) PostSettings settings,
+    required FileType type,
+  }) = _PostInfo;
 
   factory PostInfo.initial(FileType type) => PostInfo(type: type);
 
   bool get isAllValid => file != null && aspectRatio != null && description != null && description!.isNotEmpty;
 
-  @override
-  List<Object?> get props => [file, aspectRatio, description, settings, type];
-
-  @override
-  bool get stringify => true;
+  const PostInfo._();
 }

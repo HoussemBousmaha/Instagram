@@ -1,39 +1,12 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../../domain/entity/auth_failure.dart';
-import '../../../domain/entity/auth_user.dart';
-import '../notifier/auth_notifier_provider.dart';
+import '../notifier/auth_notifier.dart';
+import '../state/auth_state.dart';
 
-final authenticatedProvider = StateProvider<bool>((ref) {
-  final authenticated = ref.watch(
-    authNotifierProvider.select(
-      (state) {
-        final user = state.value?.user;
-        final failure = state.value?.failure;
+part 'auth_providers.g.dart';
 
-        return user != null && failure == null;
-      },
-    ),
-  );
-
-  return authenticated;
-});
-
-final authIsLoadingProvider = StateProvider<bool>((ref) {
-  final isLoading = ref.watch(authNotifierProvider.select((state) => state.isLoading));
-
-  return isLoading;
-});
-
-final authFailureProvider = Provider<AuthFailure?>((ref) {
+@Riverpod(keepAlive: true)
+bool authenticated(AuthenticatedRef ref) {
   final authState = ref.watch(authNotifierProvider);
-
-  final failure = authState.value?.failure;
-  return failure;
-});
-
-final currentUserProvider = Provider<AuthUser?>((ref) {
-  final user = ref.watch(authNotifierProvider.select((state) => state.value?.user));
-
-  return user;
-});
+  return authState is Authenticated;
+}

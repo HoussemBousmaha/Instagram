@@ -6,8 +6,8 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/enums.dart';
 import '../extension/post_extensions.dart';
-import '../provider/notifier/post_info_notifier_provider.dart';
-import '../provider/notifier/post_notifier_provider.dart';
+import '../provider/notifier/post_info_notifier.dart';
+import '../provider/notifier/post_notifier.dart';
 import 'preview_image.dart';
 
 class PickImagePreview extends HookConsumerWidget {

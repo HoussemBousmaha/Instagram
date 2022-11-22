@@ -2,31 +2,39 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../network/network_info.dart';
 
-final networkInfoProvider = Provider<NetworkInfo>(
-  (ref) => const NetworkInfoImpl(),
-);
+part 'app_dependecies.g.dart';
 
-final firebaseAuthProvider = Provider<FirebaseAuth>(
-  (ref) => FirebaseAuth.instance,
-);
+@riverpod
+NetworkInfo networkInfo(NetworkInfoRef ref) {
+  return const NetworkInfoImpl();
+}
 
-final firebaseFirestoreProvider = Provider<FirebaseFirestore>(
-  (ref) => FirebaseFirestore.instance,
-);
+@riverpod
+FirebaseAuth auth(AuthRef ref) {
+  return FirebaseAuth.instance;
+}
 
-final firebaseStorageProvider = Provider<FirebaseStorage>(
-  (ref) => FirebaseStorage.instance,
-);
+@riverpod
+FirebaseFirestore db(DbRef ref) {
+  return FirebaseFirestore.instance;
+}
 
-final googleSignInProvider = Provider<GoogleSignIn>(
-  (ref) => GoogleSignIn(scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']),
-);
+@riverpod
+FirebaseStorage storage(StorageRef ref) {
+  return FirebaseStorage.instance;
+}
 
-final imagePickerProvider = Provider<ImagePicker>(
-  (ref) => ImagePicker(),
-);
+@riverpod
+GoogleSignIn googleAuth(GoogleAuthRef ref) {
+  return GoogleSignIn(scopes: ['email', 'https://www.googleapis.com/auth/contacts.readonly']);
+}
+
+@riverpod
+ImagePicker imagePicker(ImagePickerRef ref) {
+  return ImagePicker();
+}

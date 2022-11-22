@@ -15,7 +15,7 @@ class DeletePostUseCase extends BaseUseCase<PostEntity, PostFailure, DeletePostU
 
   @override
   Future<Either<PostFailure, PostEntity>> call(DeletePostUseCaseParams params) async {
-    final request = DeletePostRequest(params.post);
+    final request = DeletePostRequest(post: params.post);
     return await _postRepo.deletePost(request);
   }
 }

@@ -1,38 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entity/post_settings.dart';
 import '../../presentation/constants/enums.dart';
 import '../../presentation/constants/post_constants.dart';
 
-@immutable
-class PostModel extends Equatable {
-  final String? id;
-  final String? userId;
-  final String? fileUrl;
-  final String? fileId;
-  final FileType? type;
-  final String? thumbnailUrl;
-  final String? thumbnailId;
-  final String? description;
-  final double? aspectRatio;
-  final PostSettings? settings;
-  final DateTime? createdAt;
+part "post_model.freezed.dart";
 
-  const PostModel({
-    this.id,
-    this.userId,
-    this.fileUrl,
-    this.fileId,
-    this.type,
-    this.thumbnailUrl,
-    this.thumbnailId,
-    this.description,
-    this.aspectRatio,
-    this.settings,
-    this.createdAt,
-  });
+@freezed
+class PostModel with _$PostModel {
+  const factory PostModel({
+    String? id,
+    String? userId,
+    String? fileUrl,
+    String? fileId,
+    FileType? type,
+    String? thumbnailUrl,
+    String? thumbnailId,
+    String? description,
+    double? aspectRatio,
+    PostSettings? settings,
+    DateTime? createdAt,
+  }) = _PostModel;
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
     return PostModel(
@@ -49,24 +38,6 @@ class PostModel extends Equatable {
       createdAt: (json[PostJsonKeys.createdAt] as Timestamp).toDate(),
     );
   }
-
-  @override
-  List<Object?> get props => [
-        id,
-        userId,
-        fileUrl,
-        fileId,
-        type,
-        thumbnailUrl,
-        thumbnailId,
-        description,
-        aspectRatio,
-        settings,
-        createdAt,
-      ];
-
-  @override
-  bool get stringify => true;
 }
 
 FileType fileType(String type) {

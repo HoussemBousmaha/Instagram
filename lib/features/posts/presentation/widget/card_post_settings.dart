@@ -3,8 +3,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/enums.dart';
-import '../provider/notifier/post_info_notifier_provider.dart';
-import '../provider/notifier/post_settings_notifier_provider.dart';
+import '../provider/notifier/post_info_notifier.dart';
+import '../provider/notifier/post_settings_notifier.dart';
 
 class PostSettingsCard extends HookConsumerWidget {
   const PostSettingsCard({Key? key, required this.type}) : super(key: key);

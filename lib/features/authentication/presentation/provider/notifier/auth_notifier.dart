@@ -1,179 +1,148 @@
-import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../../core/base/usecase/base_usecase.dart';
-import '../../../../../core/constant/enum.dart';
-import '../../../../posts/presentation/provider/dependencies/post_providers.dart';
-import '../../../domain/entity/auth_failure.dart';
-import '../../../domain/entity/auth_user.dart';
+import '../../../domain/usecase/register_with_email_and_password_usecase.dart.dart';
 import '../../../domain/usecase/sign_in_with_email_and_password_usecase.dart';
-import '../../../domain/usecase/sign_up_with_email_and_password_usecase.dart';
 import '../dependencies/auth_dependencies.dart';
 import '../state/auth_state.dart';
 
+part 'auth_notifier.g.dart';
+
 @immutable
-abstract class AuthNotifier extends AsyncNotifier<AuthState> {
-  void resetState();
-  Future<void> signUpWithEmailAndPassword(String email, String password);
-  Future<void> signInWithEmailAndPassword(String email, String password);
-  Future<void> signOut();
-  Future<void> signInWithGoogle();
-  Future<void> signInWithFacebook();
-  Future<AuthState> get currentAuthUser;
+abstract class AuthNotifierInterface {
+  FutureOr<void> registerWithEmailAndPassword(String email, String password);
+  FutureOr<void> signInWithEmailAndPassword(String email, String password);
+  FutureOr<void> signInWithGoogle();
+  FutureOr<void> signOut();
+  FutureOr<AuthState> get currentAuthUser;
 }
 
-typedef AsyncAuthState = AsyncValue<AuthState>;
-
-class AuthNotifierImpl extends AuthNotifier {
-  set authState(AuthState state) {
-    super.state = AsyncAuthState.data(state);
-  }
-
+@Riverpod(keepAlive: true)
+class AuthNotifier extends _$AuthNotifier implements AuthNotifierInterface {
   @override
-  void resetState() {
-    authState = AuthState.initial();
-  }
-
-  set authFailure(AuthFailure failure) {
-    authState = AuthState.failure(failure);
-  }
-
-  set authSuccess(AuthUser user) {
-    authState = AuthState.success(user);
-  }
-
-  set isLoading(bool isLoading) {
-    if (isLoading) {
-      authState = state.requireValue.copyWith(viewState: ViewState.loading);
-    }
-  }
-
-  @override
-  FutureOr<AuthState> build() async {
-    return await currentAuthUser;
-  }
-
-  @override
-  Future<void> signUpWithEmailAndPassword(String email, String password) async {
-    isLoading = true;
-
-    final result = await ref.refresh(signUpWithEmailAndPasswordUseCaseProvider)(
-      SignUpWithEmailAndPasswordUseCaseParams(email, password),
+  AuthState build() {
+    Future.delayed(
+      const Duration(seconds: 1),
+      () => currentAuthUser.then((authState) => state = authState),
     );
 
-    result.fold(
+    return const AuthState.loading();
+  }
+
+  @override
+  FutureOr<void> registerWithEmailAndPassword(String email, String password) async {
+    final registerWithEmailAndPasswordUseCase = ref.read(registerWithEmailAndPasswordUseCaseProvider);
+
+    state = const AuthState.loading();
+
+    final params = RegisterWithEmailAndPasswordUseCaseParams(email, password);
+
+    final result = await registerWithEmailAndPasswordUseCase(params);
+
+    state = result.fold(
       (failure) {
-        debugPrint('sign up with email and password failure: $failure');
-        authFailure = failure;
+        log('register with email and password failure: $failure');
+        return AuthState.unauthenticated(failure);
       },
-      (authUser) {
-        debugPrint('sign up with email and password success');
-        authSuccess = authUser;
-      },
-    );
-  }
-
-  @override
-  Future<void> signInWithEmailAndPassword(String email, String password) async {
-    isLoading = true;
-
-    final result = await ref.read(signInWithEmailAndPasswordUseCaseProvider)(
-      SignInWithEmailAndPasswordUseCaseParams(email, password),
-    );
-
-    result.fold(
-      (failure) {
-        debugPrint('sign in with email and password failure: $failure');
-        authFailure = failure;
-      },
-      (authUser) {
-        debugPrint('sign in with email and password success');
-        authSuccess = authUser;
+      (user) {
+        log('register with email and password success: $user');
+        return AuthState.authenticated(user);
       },
     );
   }
 
   @override
-  Future<void> signInWithGoogle() async {
-    isLoading = true;
+  FutureOr<void> signInWithEmailAndPassword(String email, String password) async {
+    final signInWithEmailAndPasswordUseCase = ref.read(signInWithEmailAndPasswordUseCaseProvider);
 
-    final result = await ref.refresh(signInWithGoogleUseCaseProvider)(const NoParams());
+    state = const AuthState.loading();
 
-    result.fold(
+    final params = SignInWithEmailAndPasswordUseCaseParams(email, password);
+
+    final result = await signInWithEmailAndPasswordUseCase(params);
+
+    state = result.fold(
       (failure) {
-        debugPrint('sign in with google failure: $failure');
-        authFailure = failure;
+        log('sign in with email and password failure: $failure');
+        return AuthState.unauthenticated(failure);
       },
-      (authUser) {
-        debugPrint('sign in with google success');
-        authSuccess = authUser;
+      (user) {
+        log('sign in with email and password success: $user');
+        return AuthState.authenticated(user);
       },
     );
   }
 
   @override
-  Future<void> signInWithFacebook() async {
-    isLoading = true;
+  FutureOr<void> signInWithGoogle() async {
+    final signInWithGoogleUseCase = ref.read(signInWithGoogleUseCaseProvider);
 
-    final result = await ref.refresh(signInWithFacebookUseCaseProvider)(const NoParams());
+    state = const AuthState.loading();
 
-    result.fold(
+    const params = NoParams();
+
+    final result = await signInWithGoogleUseCase(params);
+
+    state = result.fold(
       (failure) {
-        debugPrint('sign in with facebook failure: $failure');
-        authFailure = failure;
+        log('sign in with google failure: $failure');
+        return AuthState.unauthenticated(failure);
       },
-      (authUser) {
-        debugPrint('sign in with facebook success');
-        authSuccess = authUser;
+      (user) {
+        log('sign in with google success: $user');
+        return AuthState.authenticated(user);
       },
     );
   }
 
   @override
-  Future<void> signOut() async {
-    isLoading = true;
+  FutureOr<void> signOut() async {
+    final signOutUseCase = ref.read(signOutUseCaseProvider);
 
-    await Future.delayed(const Duration(seconds: 1));
+    const params = NoParams();
 
-    ref.invalidate(postsStreamProvider);
+    final result = await signOutUseCase(params);
 
-    final result = await ref.refresh(signOutUseCaseProvider)(const NoParams());
-
-    result.fold(
+    state = result.fold(
       (failure) {
-        debugPrint('sign out failure: $failure');
-        authFailure = failure;
+        log('register with email and password failure: $failure');
+        return AuthState.unauthenticated(failure);
       },
       (_) {
-        debugPrint('sign out success');
-        authState = AuthState.initial();
+        log('sign out success');
+        return const AuthState.initial();
       },
     );
   }
 
   @override
   Future<AuthState> get currentAuthUser async {
-    await Future.delayed(const Duration(seconds: 1));
-    final result = await ref.refresh(currentUserUseCase)(const NoParams());
+    final getCurrentAuthUserUseCase = ref.read(currentAuthUserUseCaseProvider);
 
-    return result.fold(
+    state = const AuthState.loading();
+
+    const params = NoParams();
+
+    final result = await getCurrentAuthUserUseCase(params);
+
+    state = result.fold(
       (failure) {
-        debugPrint('check auth status failure: $failure');
-        return AuthState.failure(failure);
+        log('get current auth user failure: $failure');
+        return AuthState.unauthenticated(failure);
       },
-      (authUser) {
-        if (authUser == null) {
-          // not signed in
-          debugPrint('check auth status success, not signed in');
-          return AuthState.initial();
+      (user) {
+        log('current auth user: $user');
+        if (user == null) {
+          return const AuthState.initial();
         } else {
-          // signed in
-          debugPrint('check auth status success, signed in');
-          return AuthState.success(authUser);
+          return AuthState.authenticated(user);
         }
       },
     );
+
+    return state;
   }
 }

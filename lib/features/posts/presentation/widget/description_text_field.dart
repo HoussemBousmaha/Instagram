@@ -3,7 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../constants/enums.dart';
-import '../provider/notifier/post_info_notifier_provider.dart';
+import '../provider/notifier/post_info_notifier.dart';
 
 class DescriptionTextField extends HookConsumerWidget {
   const DescriptionTextField({Key? key, required this.type}) : super(key: key);

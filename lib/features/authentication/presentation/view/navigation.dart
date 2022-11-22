@@ -3,10 +3,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import '../../../../core/handler/loading_dialog_handler.dart';
-import '../../../posts/presentation/handler/post_failure_handler.dart';
 import '../handler/auth_failure_hanlder.dart';
-import '../provider/notifier/auth_notifier_provider.dart';
+import '../provider/notifier/auth_notifier.dart';
 import '../widget/bottom_navbar.dart';
 
 class NavView extends HookConsumerWidget {
@@ -18,9 +16,7 @@ class NavView extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authNotifier = ref.read(authNotifierProvider.notifier);
 
-    LoadingDialogHandler.handle(ref);
     AuthFailureDialogHandler.handle(ref);
-    PostFailureDialogHandler.handle(ref);
 
     return Scaffold(
       appBar: AppBar(
@@ -29,7 +25,9 @@ class NavView extends HookConsumerWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(FontAwesomeIcons.rightFromBracket),
-          onPressed: () => authNotifier.signOut(),
+          onPressed: () {
+            authNotifier.signOut();
+          },
         ),
         actions: [
           IconButton(

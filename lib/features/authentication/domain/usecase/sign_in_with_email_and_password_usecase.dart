@@ -16,7 +16,7 @@ class SignInWithEmailAndPasswordUseCase
 
   @override
   Future<Either<AuthFailure, AuthUser>> call(params) async {
-    final request = AuthRequest(params.email, params.password);
+    final request = AuthRequest(email: params.email, password: params.password);
 
     return await _authRepo.signInWithEmailAndPassword(request);
   }

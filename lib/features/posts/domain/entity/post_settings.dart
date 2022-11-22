@@ -1,32 +1,19 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../../presentation/constants/post_constants.dart';
+part 'post_settings.freezed.dart';
+part 'post_settings.g.dart';
 
 @immutable
-class PostSettings extends Equatable {
-  final bool isCommentable;
-  final bool isLikeable;
+@freezed
+class PostSettings with _$PostSettings {
+  const factory PostSettings({
+    required bool isLikeable,
+    required bool isCommentable,
+  }) = _PostSettings;
 
-  const PostSettings({required this.isCommentable, required this.isLikeable});
+  const PostSettings._();
 
-  factory PostSettings.initial() => const PostSettings(isCommentable: true, isLikeable: true);
+  factory PostSettings.initial() => const PostSettings(isLikeable: true, isCommentable: true);
 
-  @override
-  List<Object?> get props => [isCommentable, isLikeable];
-
-  Map<String, dynamic> toJson() => {
-        PostSettingsJsonKeys.isCommentable: isCommentable,
-        PostSettingsJsonKeys.isLikeable: isLikeable,
-      };
-
-  factory PostSettings.fromJson(Map<String, dynamic> json) {
-    return PostSettings(
-      isCommentable: json[PostSettingsJsonKeys.isCommentable],
-      isLikeable: json[PostSettingsJsonKeys.isLikeable],
-    );
-  }
-
-  @override
-  bool get stringify => true;
+  factory PostSettings.fromJson(Map<String, dynamic> json) => _$PostSettingsFromJson(json);
 }

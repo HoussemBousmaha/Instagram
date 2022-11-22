@@ -8,24 +8,24 @@ import '../entity/auth_user.dart';
 import '../repository/auth_repo.dart';
 
 @immutable
-class SignUpWithEmailAndPasswordUseCase
-    extends BaseUseCase<AuthUser, AuthFailure, SignUpWithEmailAndPasswordUseCaseParams> {
+class RegisterWithEmailAndPasswordUseCase
+    extends BaseUseCase<AuthUser, AuthFailure, RegisterWithEmailAndPasswordUseCaseParams> {
   final AuthRepo _authRepo;
 
-  const SignUpWithEmailAndPasswordUseCase(this._authRepo);
+  const RegisterWithEmailAndPasswordUseCase(this._authRepo);
 
   @override
   Future<Either<AuthFailure, AuthUser>> call(params) async {
-    final request = AuthRequest(params.email, params.password);
+    final request = AuthRequest(email: params.email, password: params.password);
 
     return await _authRepo.signUpWithEmailAndPassword(request);
   }
 }
 
 @immutable
-class SignUpWithEmailAndPasswordUseCaseParams {
+class RegisterWithEmailAndPasswordUseCaseParams {
   final String email;
   final String password;
 
-  const SignUpWithEmailAndPasswordUseCaseParams(this.email, this.password);
+  const RegisterWithEmailAndPasswordUseCaseParams(this.email, this.password);
 }

@@ -16,35 +16,36 @@ class PostsGrid extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final postsAsyncValue = ref.watch(postsStreamProvider);
     return postsAsyncValue.maybeWhen(
-        orElse: () => const Center(child: CircularProgressIndicator.adaptive()),
-        data: (posts) {
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              mainAxisSpacing: 3,
-              crossAxisSpacing: 3,
-            ),
-            itemCount: posts.length,
-            itemBuilder: (context, index) {
-              final post = posts.toList()[index];
-              return GestureDetector(
-                onTap: () {
-                  context.replace('/posts/post_details', extra: post);
+      orElse: () => const Center(child: CircularProgressIndicator.adaptive()),
+      data: (posts) {
+        return GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 3,
+            crossAxisSpacing: 3,
+          ),
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            final post = posts.toList()[index];
+            return GestureDetector(
+              onTap: () {
+                context.replace('/posts/post_details', extra: post);
+              },
+              child: Image.network(
+                post.thumbnailUrl,
+                fit: BoxFit.cover,
+                errorBuilder: ((context, error, stackTrace) {
+                  return const Center(child: CircularProgressIndicator.adaptive());
+                }),
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return const Center(child: CircularProgressIndicator.adaptive());
                 },
-                child: Image.network(
-                  post.thumbnailUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: ((context, error, stackTrace) {
-                    return const Center(child: CircularProgressIndicator.adaptive());
-                  }),
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return const Center(child: CircularProgressIndicator.adaptive());
-                  },
-                ),
-              );
-            },
-          );
-        });
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }

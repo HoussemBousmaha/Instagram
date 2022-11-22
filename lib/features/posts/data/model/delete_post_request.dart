@@ -1,9 +1,12 @@
-import 'package:flutter/material.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../domain/entity/post.dart';
 
-@immutable
-class DeletePostRequest {
-  final PostEntity post;
-  const DeletePostRequest(this.post);
+part 'delete_post_request.freezed.dart';
+
+@freezed
+class DeletePostRequest with _$DeletePostRequest {
+  const factory DeletePostRequest({
+    required PostEntity post,
+  }) = _DeletePostRequest;
 }

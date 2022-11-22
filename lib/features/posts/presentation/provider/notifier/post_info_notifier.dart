@@ -1,24 +1,24 @@
 import 'dart:io';
 
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:instagram/features/posts/presentation/constants/enums.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../domain/entity/post_info.dart';
 import '../../../domain/entity/post_settings.dart';
-import '../../constants/enums.dart';
 
-abstract class PostInfoNotifier extends StateNotifier<PostInfo> {
-  PostInfoNotifier(super.state);
+part 'post_info_notifier.g.dart';
 
+abstract class PostInfoNotifierInterface {
   void setDescription(String description);
   void setFile(File file);
   void setAspectRatio(double aspectRatio);
   void setSettings(PostSettings settings);
 }
 
-class PostInfoNotifierImpl extends PostInfoNotifier {
-  final FileType fileType;
-
-  PostInfoNotifierImpl(this.fileType) : super(PostInfo.initial(fileType));
+@riverpod
+class PostInfoNotifier extends _$PostInfoNotifier implements PostInfoNotifierInterface {
+  @override
+  PostInfo build(FileType type) => PostInfo.initial(type);
 
   @override
   void setDescription(String description) {

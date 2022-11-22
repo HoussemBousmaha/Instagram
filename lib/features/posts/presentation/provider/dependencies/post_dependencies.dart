@@ -1,4 +1,4 @@
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../../core/dependencies/app_dependecies.dart';
 import '../../../data/datasource/post_remote_datasource.dart';
@@ -7,25 +7,32 @@ import '../../../domain/repository/post_repo.dart';
 import '../../../domain/usecase/create_post_usecase.dart';
 import '../../../domain/usecase/delete_post_usecase.dart';
 
-final postRemoteDataSourceProvider = Provider<PostRemoteDataSource>((ref) {
-  final firebaseAuth = ref.refresh(firebaseAuthProvider);
-  final firebaseFirestore = ref.refresh(firebaseFirestoreProvider);
-  final firebaseStorage = ref.refresh(firebaseStorageProvider);
+part 'post_dependencies.g.dart';
+
+@riverpod
+PostRemoteDataSource postRemoteDataSource(PostRemoteDataSourceRef ref) {
+  final firebaseAuth = ref.watch(authProvider);
+  final firebaseFirestore = ref.watch(dbProvider);
+  final firebaseStorage = ref.watch(storageProvider);
+
   return PostRemoteDataSourceImpl(firebaseAuth, firebaseFirestore, firebaseStorage);
-});
+}
 
-final postRepoProvider = Provider<PostRepo>((ref) {
-  final postRemoteDataSource = ref.refresh(postRemoteDataSourceProvider);
-  final networkInfo = ref.refresh(networkInfoProvider);
+@riverpod
+PostRepo postRepo(PostRepoRef ref) {
+  final postRemoteDataSource = ref.watch(postRemoteDataSourceProvider);
+  final networkInfo = ref.watch(networkInfoProvider);
   return PostRepoImpl(postRemoteDataSource, networkInfo);
-});
+}
 
-final createPostUseCaseProvider = Provider<CreatePostUseCase>((ref) {
-  final postRepo = ref.refresh(postRepoProvider);
+@riverpod
+CreatePostUseCase createPostUseCase(CreatePostUseCaseRef ref) {
+  final postRepo = ref.watch(postRepoProvider);
   return CreatePostUseCase(postRepo);
-});
+}
 
-final deletePostUseCaseProvider = Provider<DeletePostUseCase>((ref) {
-  final postRepo = ref.refresh(postRepoProvider);
+@riverpod
+DeletePostUseCase deletePostUseCase(DeletePostUseCaseRef ref) {
+  final postRepo = ref.watch(postRepoProvider);
   return DeletePostUseCase(postRepo);
-});
+}
